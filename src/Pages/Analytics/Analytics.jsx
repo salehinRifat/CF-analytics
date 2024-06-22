@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Chart } from "react-google-charts";
 const Analytics = () => {
     var problems = {};
@@ -10,17 +10,22 @@ const Analytics = () => {
     var ratings = {};
     const [contest, setContest] = useState([]);
     const [user, setUser] = useState([]);
-    const [loading, setloading] = useState(true);
+    const [loading, setloading] = useState(false);
     const handleSubmit = e => {
+        setloading(true)
         e.preventDefault();
         const handle = e.target.handle.value;
-        console.log(handle)
         axios.get(`https://codeforces.com/api/user.status?handle=${handle}`)
             .then(res => {
                 setContest(res.data.result)
+                setloading(false);
+            })
+        axios.get(`https://codeforces.com/api/user.info?handles=${handle}`)
+            .then(res => {
+                setUser(res.data.result)
+                setloading(false);
             })
     }
-
     for (var i = contest.length - 1; i >= 0; i--) {
         var sub = contest[i];
 
@@ -93,7 +98,6 @@ const Analytics = () => {
         else langs[sub.programmingLanguage]++;
 
     }
-    console.log(levels);
     const levelOptions = {
         title: "Problem levels",
         legend: "none"
@@ -136,32 +140,47 @@ const Analytics = () => {
         pieData.push([`${tag}: ${value}`, value]);
     })
     return (
-        <div className="max-w-screen-lg mx-auto">
-            <section className="flex justify-center">
-                <form onSubmit={handleSubmit}>
-                    <div className="flex gap-5 justify-center items-center">
-                        <label className="form-control w-full max-w-xs">
-                            <div className="label">
-                                <span className="label-text">Codeforces Handle</span>
-                            </div>
-                            <input type="text" name="handle" placeholder="Enter Handle" className="input input-bordered w-full max-w-xs" />
+        <div className="min-h-screen">
+            <div className="max-w-screen-lg mx-auto">
+                <section className="flex justify-cente flex-col">
+                    <form onSubmit={handleSubmit}>
+                        <div className="flex gap-5 justify-center items-center">
+                            <label className="form-control w-full max-w-xs">
+                                <div className="label">
+                                    <span className="label-text">Codeforces Handle</span>
+                                </div>
+                                <input type="text" name="handle" placeholder="Enter Handle" className="input input-bordered w-full max-w-xs" />
 
-                        </label>
-                        <input type="submit" className="btn btn-outline mt-9" />
+                            </label>
+                            <input type="submit" className="btn btn-outline mt-9" />
+                        </div>
+                    </form>
+                    <div>
+                        {user.map((item, idx) => <div key={idx} className="flex my-4 gap-4 justify-between text-center">
+                            <h1>Handle: {item.handle}</h1>
+                            <h1>Rating: {item.rating} (max: {item.maxRating})</h1>
+                            <h1>Title: {item.rank} (max : {item.maxRank})</h1>
+                        </div>)}
                     </div>
-                </form>
-            </section>
-            <section className="mt-5">
-                <div className="border-2 border-slate-400 m-1">
-                    <Chart chartType="ColumnChart" width="100%" height="400px" data={data} options={levelOptions} className="pt-0" />
+                </section>
+                <div className="flex justify-center">
+                    {loading == true ? <span className="loading loading-ring loading-lg mt-20 "></span> : <div className="flex-1">
+                        {contest.length > 0 && <section className="mt-5">
+                            <div className="border-2 border-slate-400 m-1">
+                                <Chart chartType="ColumnChart" width="100%" height="400px" data={data} options={levelOptions} className="pt-0" />
+                            </div>
+                            <div className="border-2 border-slate-400 m-1">
+                                <Chart chartType="ColumnChart" width="100%" height="400px" data={data2} options={ratingOptions} />
+                            </div>
+                            <div className="border-2 border-slate-400 m-1">
+                                <Chart chartType="PieChart" width="100%" height="400px" data={pieData} options={pieOptions} />
+                            </div>
+                        </section>}
+                    </div>}
                 </div>
-                <div className="border-2 border-slate-400 m-1">
-                    <Chart chartType="ColumnChart" width="100%" height="400px" data={data2} options={ratingOptions} />
-                </div>
-                <div className="border-2 border-slate-400 m-1">
-                    <Chart chartType="PieChart" width="100%" height="400px" data={pieData} options={pieOptions} />
-                </div>
-            </section>
+
+
+            </div>
         </div>
     );
 };
