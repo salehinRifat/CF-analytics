@@ -1,8 +1,20 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# CP calendar and Codeforces Analytics
 
-Currently, two official plugins are available:
+link - https://codef-analyzer.netlify.app/analytics
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Features
+
+- Schedule of Upcoming Contests
+- Codeforces Profile Analytics
+- Column Chart Showing Total Problems Solved by Level and Rating
+- Pie Chart Displaying Total Tags Solved
+
+
+## Tech Stack
+
+**Client:** React, TailwindCSS
+
+**Server:** Node, Express
+
